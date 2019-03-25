@@ -89,24 +89,7 @@ class DijkstraDraw:
                         red_enge.append((i + 1, j + 1))
                         self.setColor(red_enge)
         return weightResult, minWayResult
-        # valid = [True]*N
-        # weight = [100000]*N
-        # weight[S] = 0
-        # red_enge = []
-        # for i in range(N):
-        #     min_weight = 1000001
-        #     ID_min_weight = -1
-        #     for i in range(len(weight)):
-        #         if valid[i] and weight[i] < min_weight :
-        #             min_weight = weight[i]
-        #             ID_min_weight = i
-        #     for i in range(N):
-        #         if matrix[ID_min_weight][i] != 0 and weight[ID_min_weight] + matrix[ID_min_weight][i] < weight[i]:
-        #             weight[i] = weight[ID_min_weight] + matrix[ID_min_weight][i]
-        #             red_enge.append((ID_min_weight + 1, i + 1))
-        #             self.setColor(red_enge)
-        #     valid[ID_min_weight] = False
-        # return weight
+
 
 
 def main():

@@ -1,13 +1,17 @@
 import math
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 class PuassonFlow:
 
     def __init__(self, lambda_, tetra, k1, k2, alpha1, alpha2, k_e):
 
-        k = 14
+        k = k2 + 1
 
         p = [] * k
+
+        fig, ax = plt.subplots()
+
 
         print("1. Запишем закон распределения числа поступлений вызовов за промежуток времени:")
         temp = lambda_ * tetra
@@ -16,9 +20,12 @@ class PuassonFlow:
 
             print("P" + str(k_) + " = " + str(p[k_]))
 
+        ax.plot(range(k), p, linestyle="solid")
+        plt.show()
+
         print("\n\n2. Найдем наиболее вероятное число поступлений вызовов и его вероятность:")
         k_max = p.index(max(p))
-        print(k_max)
+        print(k_max, p[k_max])
 
         print("\n\n3. Найдем вероятность того, что число вызовов, которые поступят за промежуток времени :")
 
@@ -32,7 +39,20 @@ class PuassonFlow:
 
         print("\n\n5. Построим графики функции и плотности распределения :")
 
-        # графики!
+        fig, ax = plt.subplots()
+        ax.plot(range(4),
+                [self.distribution_density(lambda_, i) for i in range(4)],
+                # [self.distribution_density(lambda_, i) for i in np.arange(0.0, 4.0, 0.1)],
+                linestyle="solid")
+        plt.show()
+
+
+        fig, ax = plt.subplots()
+        ax.plot(range(4),
+                [self.distribution_function(lambda_, i) for i in range(4)],
+                linestyle="solid")
+        plt.show()
+
 
         print("Математическое ожидание: 1 /", lambda_, "=", 1 / lambda_)
         print("Дисперисия: 1 / (", lambda_, "^2 ) =", 1 / (lambda_ ** 2))
@@ -59,12 +79,12 @@ class PuassonFlow:
 
 if __name__ == "__main__":
 
-    lambda_ = 2
-    tetra = 3.5
-    k1 = 4
-    k2 = 10
+    lambda_ = 6.5
+    tetra = 1
+    k1 = 10
+    k2 = 16
     alpha1 = 0.5
-    alpha2 = 1.0
+    alpha2 = 2.5
 
     k_e = 3
 
