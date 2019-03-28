@@ -1,6 +1,16 @@
 import math
 import matplotlib.pyplot as plt
 
+def printPlot(x, y, legend = []):
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    ax.plot(x, y, linestyle="solid")
+    ax.fill_between(x, y, where = y > [0],
+                    color='green', alpha=0.3)
+    if legend:
+        lgnd = ax.legend(legend, loc='upper center', shadow=True)
+        lgnd.get_frame().set_facecolor('#ffb19a')
+    plt.show()
 
 class PuassonFlow:
 
@@ -24,11 +34,7 @@ class PuassonFlow:
 
             print("P" + str(k_) + " = " + str(p[k_]))
 
-        fig, ax = plt.subplots()
-        ax.plot(range(k1),
-                p[:k1],
-                linestyle="solid")
-        plt.show()
+        printPlot(range(k1), p[:k1])
 
         t = 2
 
@@ -42,11 +48,7 @@ class PuassonFlow:
 
             print("P" + str(k_) + " = " + str(p[k_]))
 
-        fig, ax = plt.subplots()
-        ax.plot(range(k1, k2),
-                p[k1:k2],
-                linestyle="solid")
-        plt.show()
+        printPlot(range(k1, k2), p[k1:k2])
 
     def p_k_function(self, k, tetra):
         return (self.m ** k) / math.factorial(k) * \
@@ -61,8 +63,8 @@ class PuassonFlow:
 
 if __name__ == "__main__":
 
-    a = 4
+    a = 6
     b = 1
-    t0 = 0.2
+    t0 = 0.9
 
     p = PuassonFlow(a, b, t0)

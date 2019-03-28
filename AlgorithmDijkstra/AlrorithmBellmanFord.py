@@ -24,11 +24,12 @@ class BellmanFordDraw:
 
         self.G = nx.from_numpy_matrix(self.m, create_using=nx.DiGraph(directed=True))
         self.G.edges(data=True)
-        # self.G = nx.relabel_nodes(self.G, {0: 1, 1: 2, 2: 3, 3: 4, 4: 5})
+        dist = {i: i + 1 for i in range(len(matrix))}
+        self.G = nx.relabel_nodes(self.G, dist)
         self.setColor();
 
-    def setColor(self, red_edges=[]):
-
+    def setColor(self, ways = []):
+        red_edges = [(ways[i], ways[i + 1]) for i in range(len(ways) - 1)]
         edge_labels = dict([((u, v,), d['weight'])
                             for u, v, d in self.G.edges(data=True)])
         edge_colors = ['black' if not edge in red_edges else 'red' for edge in self.G.edges()]
@@ -44,8 +45,8 @@ class BellmanFordDraw:
                 edge_color=edge_colors)
         plt.show()
 
-    def BellmanFordAlg(self, countNode, startNode, matrix):
-
+    def BellmanFordAlg(self, startNode, matrix):
+        countNode = len(matrix)
         nodes = matrix2dictionary(matrix)
         l = [float('inf')] * len(matrix)
         _l = [False] * len(matrix)
@@ -53,7 +54,6 @@ class BellmanFordDraw:
         _l[startNode] = True
         Q = [startNode]
         minWayResult = [[]] * countNode
-        # i = startNode
         while Q:
             q = Q[0]
             Q.remove(q)
@@ -67,10 +67,7 @@ class BellmanFordDraw:
                         Q.insert(0, j)
                     else:
                         Q.append(j)
-                # if i == minIndex or l[j] < l[minIndex]:
-                #     minIndex = j
-                minWayResult[j] = (minWayResult[q] or [startNode + 1]) + [j + 1]
-            # _l[minIndex] = True
+                    minWayResult[j] = (minWayResult[q] or [startNode + 1]) + [j + 1]
 
         print()
         return l, minWayResult
@@ -110,15 +107,19 @@ def test():
     n = 6
     s = 0
     e = 5
-    matrix = [[0, 4, 0, 6, 0, 0],
-              [0, 0, 7, -8, 6, 0],
-              [0, 0, 0, 0, -7, 5],
-              [0, 0, 8, 0, 9, 0],
-              [0, 0, 0, 0, 0, 3],
-              [0, 0, 0, 0, 0, 0]]
+    matrix = [[0, 4, 0, 15, 8, 0, 0],
+              [0, 0, 5, 0, 0, 0, 0],
+              [0, 0, 0, 0, 9, 0, 7],
+              [0, 0, 4, 0, 10, -6, 0],
+              [0, 0, 5, 0, 0, 7, 16],
+              [0, -18, 7, 0, 0, 0, 6],
+              [0, 0, 0, 0, 0, 0, 0],
+              ]
     bellmanFordObj = BellmanFordDraw(matrix)
-    res, ways = bellmanFordObj.BellmanFordAlg(n, s, matrix)
+    res, ways = bellmanFordObj.BellmanFordAlg(s, matrix)
 
+    for i in range(1, len(ways)):
+        bellmanFordObj.setColor(ways[i])
     print(res)
     print(ways)
 

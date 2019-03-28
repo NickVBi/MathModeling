@@ -43,11 +43,12 @@ class BellmanKalabaDraw:
 
         self.G = nx.from_numpy_matrix(self.m, create_using=nx.DiGraph(directed=True))
         self.G.edges(data=True)
-        # self.G = nx.relabel_nodes(self.G, {0: 1, 1: 2, 2: 3, 3: 4, 4: 5})
+        dist = {i: i + 1 for i in range(len(matrix))}
+        self.G = nx.relabel_nodes(self.G, dist)
         self.setColor();
 
-    def setColor(self, red_edges=[]):
-
+    def setColor(self, ways = []):
+        red_edges = [(ways[i + 1], ways[i]) for i in range(len(ways) - 1)]
         edge_labels = dict([((u, v,), d['weight'])
                             for u, v, d in self.G.edges(data=True)])
         edge_colors = ['black' if not edge in red_edges else 'red' for edge in self.G.edges()]
@@ -70,32 +71,29 @@ class BellmanKalabaDraw:
         n = len(matrix)
         v = [[0] * n]
 
-        minWayResult = [[] * n]
+        minWayResult = [[]] * n
 
         for i in range(n - 1):
             v[0][i] = algMatrix[i][n - 1]
-            minWayResult.append([i])
+            minWayResult[i] = [n] + ([i + 1] if matrix[i][n - 1] > 0 else [])
         k = 0
 
         while not k or v[k] != v[k - 1]:
             k += 1
             v += [[0] * n]
             for i in range(n - 1):
-                # v[k][i] = max([algMatrix[i][j] + v[k - 1][j] for j in range(n)])
-                maxIndexJ = 0
-                maxVal = 0
+                #v[k][i] = max([algMatrix[i][j] + v[k - 1][j] for j in range(n)])
+                max_t = 0
+                max_j = 0
                 for j in range(n):
-                    maxVal = algMatrix[i][maxIndexJ] + v[k - 1][maxIndexJ]
-                    if algMatrix[i][j] + v[k - 1][j] > maxVal:
-                        maxIndexJ = j
-                v[k][i] = maxVal
-                if maxIndexJ not in minWayResult[maxIndexJ]:
-                    minWayResult[maxIndexJ] += [i]
-                # minWayResult[maxV] = (minWayResult[k] or [n - 1]) + [maxV]
+                    t = algMatrix[i][j] + v[k - 1][j]
+                    if (t > max_t):
+                        max_t = t
+                        max_j = j
+                v[k][i] = max_t
+                minWayResult[i] = minWayResult[max_j] + ([max_j + 1] if (max_j + 1 ) not in minWayResult[max_j] else [])
 
-        for i in minWayResult:
-            print(i)
-        return v
+        return minWayResult, v
 
 
 
@@ -115,16 +113,20 @@ def main():
         print(i for i in ways)
 
 def test():
-    matrix = [[0, 3, 9, 6, 0, 11, 0],
-              [0, 0, 0, 5, 7, 0, 0],
-              [0, 0, 0, 4, 0, 8, 0],
-              [0, 0, 0, 0, 8, 3, 9],
-              [0, 0, 0, 0, 0, 0, 11],
+    matrix = [[0, 4, 15, 8, 0, 0, 0],
+              [0, 0, 5, 0, 0, 0, 0],
+              [0, 0, 0, 0, 9, 0, 7],
+              [0, 0, 0, 0, 10, 6, 0],
+              [0, 0, 0, 0, 0, 7, 16],
               [0, 0, 0, 0, 0, 0, 6],
               [0, 0, 0, 0, 0, 0, 0]]
     bellmanKalabaObj = BellmanKalabaDraw(matrix)
-    res = bellmanKalabaObj.BellmanKalabaAlg(matrix)
+    ways, res = bellmanKalabaObj.BellmanKalabaAlg(matrix)
 
+    for i in range(len(ways)):
+        bellmanKalabaObj.setColor(ways[i])
+    for i in ways:
+        print(i)
     for i in res:
         print(i)
 

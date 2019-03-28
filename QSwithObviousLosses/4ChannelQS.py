@@ -1,6 +1,16 @@
 import math
 import matplotlib.pyplot as plt
 
+def printPlot(x, y, legend = []):
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    ax.plot(x, y, linestyle="solid")
+    ax.fill_between(x, y, where = y > [0],
+                    color='green', alpha=0.3)
+    if legend:
+        lgnd = ax.legend(legend, loc='upper center', shadow=True)
+        lgnd.get_frame().set_facecolor('#ffb19a')
+    plt.show()
 
 class Channel4QS:
 
@@ -24,15 +34,12 @@ class Channel4QS:
 
 
 
-        fig, ax = plt.subplots()
-        ax.plot(range(5),
-                p,
-                linestyle="solid")
-        plt.show()
+        printPlot(range(5), p)
 
         m_x = sum([p[i] * i for i in range(len(p))])
         print("Найдем среднее число занятых каналов:", m_x)
         m_x2 = sum([p[i] * i ** 2 for i in range(len(p))])
+        print("m_x2:", m_x2)
         d_x = m_x2 - m_x ** 2
         print("Дисперсия:", d_x)
         q_x = math.sqrt(d_x)
@@ -61,7 +68,8 @@ class Channel4QS:
         print()
 
         C_t = sum((self.C(N, j) * alpha ** j) for j in range(1, nChannel + 1))
-
+        print(C_t)
+        print([(self.C(N, k) * alpha **k) for k in range(nChannel + 1)])
         p = [(self.C(N, k) * alpha **k) / C_t for k in range(nChannel + 1)]
 
 
@@ -86,7 +94,8 @@ class Channel4QS:
         N -= 1
 
         C_t = sum((self.C(N, j) * alpha ** j) for j in range(1, nChannel + 1))
-
+        print(C_t)
+        print([(self.C(N, k) * alpha **k) for k in range(nChannel + 1)])
         p = [(self.C(N, k) * alpha **k) / C_t for k in range(nChannel + 1)]
 
 
@@ -134,8 +143,8 @@ class Channel4QS:
 
 if __name__ == "__main__":
 
-    lambda_ = 4
-    N = 6
-    alpha = 2
+    lambda_ = 7.5
+    N = 5
+    alpha = 3
 
     p = Channel4QS(lambda_, N, alpha)

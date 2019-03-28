@@ -1,6 +1,16 @@
 import math
 import matplotlib.pyplot as plt
 
+def printPlot(x, y, legend = []):
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    ax.plot(x, y, linestyle="solid")
+    ax.fill_between(x, y, where = y > [0],
+                    color='green', alpha=0.3)
+    if legend:
+        lgnd = ax.legend(legend, loc='upper center', shadow=True)
+        lgnd.get_frame().set_facecolor('#ffb19a')
+    plt.show()
 
 class Channel3QS:
 
@@ -22,19 +32,13 @@ class Channel3QS:
         if sum(p) == 1:
             print("OK")
 
-
-
-        fig, ax = plt.subplots()
-        ax.plot(range(4),
-                p,
-                linestyle="solid")
-        plt.show()
+        printPlot(range(4), p)
 
         print("Вероятность потери вызовов (вероятность отказа)", p[nChannel])
         print("Найдем среднее число занятых каналов:", sum([p[i] * i for i in range(len(p))]))
 
 if __name__ == "__main__":
 
-    lambda_ = 4
+    lambda_ = 7.5
 
     p = Channel3QS(lambda_)

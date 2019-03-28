@@ -27,11 +27,12 @@ class DijkstraDraw:
 
         self.G = nx.from_numpy_matrix(self.m, create_using=nx.DiGraph(directed=True))
         self.G.edges(data=True)
-        self.G = nx.relabel_nodes(self.G, {0: 1, 1: 2, 2: 3, 3: 4, 4: 5})
+        dist = {i: i + 1 for i in range(len(matrix))}
+        self.G = nx.relabel_nodes(self.G, dist)
         self.setColor();
 
-    def setColor(self, red_edges = []):
-
+    def setColor(self, ways = []):
+        red_edges = [(ways[i], ways[i + 1]) for i in range(len(ways) - 1)]
         edge_labels = dict([((u, v,), d['weight'])
                             for u, v, d in self.G.edges(data=True)])
         edge_colors = ['black' if not edge in red_edges else 'red' for edge in self.G.edges()]
@@ -48,11 +49,11 @@ class DijkstraDraw:
         plt.show()
 
 
-    def DijkstraAlg(self, countNode, startNode, matrix):
-
+    def DijkstraAlg(self, startNode, matrix):
+        countNode = len(matrix)
         nodes = matrix2dictionary(matrix)
-        l = [float('inf')] * len(matrix)
-        _l = [False] * len(matrix)
+        l = [float('inf')] * countNode
+        _l = [False] * countNode
         l[startNode] = 0
         _l[startNode] = True
 
@@ -61,15 +62,16 @@ class DijkstraDraw:
         for node in nodes.keys():
             minIndex = node
             for j, weight in nodes[node].items():
-                l[j] = min(l[j], l[node] + weight)
-                if node == minIndex or l[j] < l[minIndex]:
-                    minIndex = j
-                minWayResult[j] = (minWayResult[node] or [startNode + 1]) + [j + 1]
+                if l[node] + weight < l[j]:
+                    l[j] = l[node] + weight
+                    if l[j] < l[minIndex]:
+                        minIndex = j
+                    minWayResult[j] = (minWayResult[minIndex] or [startNode + 1]) + [j + 1]
             _l[minIndex] = True
 
         return minWayResult, l
 
-
+        countNode = len(matrix)
         weightResult = [float('inf')] * countNode
         minWayResult = [[]] * countNode
         weightResult[startNode] = 0
@@ -85,9 +87,6 @@ class DijkstraDraw:
                         weightResult[j] = weightResult[i] + weight
                         minWayResult[j] = (minWayResult[i] or [startNode + 1]) + [j + 1]
 
-
-                        red_enge.append((i + 1, j + 1))
-                        self.setColor(red_enge)
         return weightResult, minWayResult
 
 
@@ -108,17 +107,21 @@ def main():
 
 
 def test():
-    n = 5
+    n = 6
     s = 0
-    matrix = [[0, 4, 7, 12, 0],
-                [0, 0, 2, 8, 5],
-                [0, 0, 0, 0, 2],
-                [0, 0, 0, 0, 1],
-                [0, 0, 0, 0, 0]]
+    matrix = [[0, 7, 2, 0, 13, 0],
+              [0, 0, 0, 0, 6, 0],
+              [0, 2, 0, 1, 3, 11],
+              [0, 0, 0, 0, 0, 5],
+              [0, 0, 0, 3, 0, 5],
+              [0, 0, 0, 0, 0, 0]
+              ]
     dijkstraObj = DijkstraDraw(matrix)
-    res = dijkstraObj.DijkstraAlg(n, s, matrix)
+    ways, res = dijkstraObj.DijkstraAlg(s, matrix)
+    for i in range(1, len(ways)):
+        dijkstraObj.setColor(ways[i])
     print(res)
-    # print(ways)
+    print(ways)
 
 def testNode():
     matrix = [[0, 4, 7, 12, 0],

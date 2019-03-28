@@ -2,6 +2,17 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+def printPlot(x, y, legend = []):
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    ax.plot(x, y, linestyle="solid")
+    ax.fill_between(x, y, where = y > [0],
+                    color='green', alpha=0.3)
+    if legend:
+        lgnd = ax.legend(legend, loc='upper center', shadow=True)
+        lgnd.get_frame().set_facecolor('#ffb19a')
+    plt.show()
+
 class PuassonFlow:
 
     def __init__(self, lambda_, tetra, k1, k2, alpha1, alpha2, k_e):
@@ -10,7 +21,6 @@ class PuassonFlow:
 
         p = [] * k
 
-        fig, ax = plt.subplots()
 
 
         print("1. Запишем закон распределения числа поступлений вызовов за промежуток времени:")
@@ -20,8 +30,7 @@ class PuassonFlow:
 
             print("P" + str(k_) + " = " + str(p[k_]))
 
-        ax.plot(range(k), p, linestyle="solid")
-        plt.show()
+        printPlot(range(k), p)
 
         print("\n\n2. Найдем наиболее вероятное число поступлений вызовов и его вероятность:")
         k_max = p.index(max(p))
@@ -39,20 +48,10 @@ class PuassonFlow:
 
         print("\n\n5. Построим графики функции и плотности распределения :")
 
-        fig, ax = plt.subplots()
-        ax.plot(range(4),
-                [self.distribution_density(lambda_, i) for i in range(4)],
-                # [self.distribution_density(lambda_, i) for i in np.arange(0.0, 4.0, 0.1)],
-                linestyle="solid")
-        plt.show()
 
+        printPlot(range(4), [self.distribution_density(lambda_, i) for i in range(4)], ["1 - e ^ (-6.5 * t)"])
 
-        fig, ax = plt.subplots()
-        ax.plot(range(4),
-                [self.distribution_function(lambda_, i) for i in range(4)],
-                linestyle="solid")
-        plt.show()
-
+        printPlot(range(4), [self.distribution_function(lambda_, i) for i in range(4)], ["6.5 * e ^ (-6.5 * t)"])
 
         print("Математическое ожидание: 1 /", lambda_, "=", 1 / lambda_)
         print("Дисперисия: 1 / (", lambda_, "^2 ) =", 1 / (lambda_ ** 2))
